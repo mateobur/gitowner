@@ -1,4 +1,5 @@
 APP_NAME = topowners
+GOPATH ?= ~/go
 BIN_DIR = $(GOPATH)/bin
 
 build:
