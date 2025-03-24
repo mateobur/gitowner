@@ -9,9 +9,20 @@ A simple CLI tool to find the top committers (potential owners) of a local Git r
 - Ranks the results by score and prints the top contributors.
 
 ## Installation
-1. Clone this repository or copy the code into your own Go project.
-2. Run `go build -o top-owners .` inside the directory with `main.go`.
 
+### With Make
+
+1. Run `make build` to compile the binary.
+2. Run `make install` to copy the binary to `$GOPATH/bin`.
+
+### Manual
+
+1. Clone this repository or copy the code into your own Go project.
+2. Run:
+
+   ```sh
+   go build -o top-owners .
+   
 ## Usage
 ```
 ./top-owners [--tau=365.0] [--count=3] <local_repo_path>
