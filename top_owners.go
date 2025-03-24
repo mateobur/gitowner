@@ -12,7 +12,7 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/object"
 )
 
-// OwnerScore representa un usuario y su puntuación
+// OwnerScore represents a user and their score
 type OwnerScore struct {
 	Email string
 	Score float64
@@ -29,7 +29,7 @@ func topOwnersLocal(repoPath string, tau float64, count int) ([]OwnerScore, erro
 		return nil, err
 	}
 
-	cIter, err := repo.Log(&git.LogOptions{From: ref.Hash()})
+	commitIter, err := repo.Log(&git.LogOptions{From: ref.Hash()})
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +37,7 @@ func topOwnersLocal(repoPath string, tau float64, count int) ([]OwnerScore, erro
 	userScores := make(map[string]float64)
 	now := time.Now()
 
-	err = cIter.ForEach(func(c *object.Commit) error {
+	err = commitIter.ForEach(func(c *object.Commit) error {
 		author := c.Author.Email
 		daysAgo := now.Sub(c.Author.When).Hours() / 24
 		weight := math.Exp(-daysAgo / tau)
@@ -48,18 +48,18 @@ func topOwnersLocal(repoPath string, tau float64, count int) ([]OwnerScore, erro
 		return nil, err
 	}
 
-	// Convertir el mapa a un slice para poder ordenarlo
+	// Convert the map to a slice to allow sorting
 	owners := make([]OwnerScore, 0, len(userScores))
 	for email, score := range userScores {
 		owners = append(owners, OwnerScore{Email: email, Score: score})
 	}
 
-	// Ordenar por puntuación de mayor a menor
+	// Sort by score descending
 	sort.Slice(owners, func(i, j int) bool {
 		return owners[i].Score > owners[j].Score
 	})
 
-	// Devolver solo los primeros "count" resultados o menos si no hay suficientes
+	// Return only the top "count" results or fewer if not enough
 	if len(owners) > count {
 		owners = owners[:count]
 	}
@@ -68,12 +68,12 @@ func topOwnersLocal(repoPath string, tau float64, count int) ([]OwnerScore, erro
 }
 
 func main() {
-	tau := flag.Float64("tau", 365.0, "Parámetro de penalización temporal (en días)")
-	count := flag.Int("count", 3, "Número de propietarios más probables a mostrar")
+	tau := flag.Float64("tau", 365.0, "Temporal decay parameter (in days)")
+	count := flag.Int("count", 3, "Number of most likely owners to display")
 	flag.Parse()
 
 	if len(flag.Args()) < 1 {
-		fmt.Println("Uso: go run main.go [--tau=...] [--count=...] <path_local_repo>")
+		fmt.Println("Usage: go run main.go [--tau=...] [--count=...] <local_repo_path>")
 		os.Exit(1)
 	}
 
@@ -84,8 +84,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println("Top propietarios más probables:")
+	fmt.Println("Top likely owners:")
 	for i, owner := range owners {
-		fmt.Printf("%d. %s (puntuación: %.2f)\n", i+1, owner.Email, owner.Score)
+		fmt.Printf("%d. %s (score: %.2f)\n", i+1, owner.Email, owner.Score)
 	}
 }
