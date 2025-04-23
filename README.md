@@ -1,42 +1,28 @@
-# top-owners
+# Git Repo Owner Analyzer
 
-A simple CLI tool to find the top committers (potential owners) of a local Git repository, with a time-decay factor to give more recent commits higher weight.
+This tool analyzes the commit history of one or more local Git repositories to identify the most likely or active recent contributors (owners). It calculates a score for each author based on the frequency and recency of their commits, applies a bonus for contributing to multiple analyzed repositories, and can merge contributions from the same person using different email addresses via an alias file.
 
-## How It Works
-- Opens the specified local Git repository.
-- Logs all commits from the current HEAD.
-- Calculates a weighted score for each committer’s email based on how recent their commits are, using an exponential decay function.
-- Ranks the results by score and prints the top contributors.
+## Features
+
+*   **Recency Weighting:** Uses an exponential decay function (`--tau` parameter) to give more weight to recent commits.
+*   **Multi-Repository Analysis:** Analyzes one or multiple local Git repositories simultaneously.
+*   **Cross-Repository Bonus:** Applies a configurable score bonus (`--bonus-per-repo`) for authors contributing to more than one of the analyzed repositories.
+*   **Email Alias Merging:** Merges contributions from different email addresses belonging to the same person using an optional TOML alias file (`--aliases-file`).
+*   **Top N Results:** Displays the top N contributors (`--count` parameter) sorted by score.
 
 ## Installation
 
-### With Make
+1.  **Install Go:** Ensure you have Go installed (version 1.18 or later recommended). You can download it from [golang.org](https://golang.org/dl/).
+2.  **Get Dependencies:** Open your terminal and run:
+    ```bash
+    go get github.com/go-git/go-git/v5
+    go get github.com/BurntSushi/toml
+    ```
+3.  **Get the Code:** Clone this repository or download the `main.go` file.
 
-1. Run `make build` to compile the binary.
-2. Run `make install` to copy the binary to `$GOPATH/bin`.
-
-### Manual
-
-1. Clone this repository or copy the code into your own Go project.
-2. Run:
-
-   ```sh
-   go build -o top-owners .
-   
 ## Usage
-```
-./top-owners [--tau=365.0] [--count=3] <local_repo_path>
-```
-- `--tau`: Temporal decay parameter in days (default `365`).
-- `--count`: Number of top owners to display (default `3`).
-- `<local_repo_path>`: Path to your local Git repository.
 
-Example:
-```
-./top-owners --tau=30 --count=5 /path/to/repo
-```
+Run the tool from your terminal using `go run main.go`, providing the paths to the local Git repositories you want to analyze as arguments.
 
-## Notes
-- The score is higher when commits are more recent.
-- Authors are identified by their email.
-- Adjust `tau` to change how quickly older commits lose weight.
+```bash
+go run main.go [flags] /path/to/repo1 [/path/to/repo2 ...]
