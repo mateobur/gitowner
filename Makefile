@@ -1,4 +1,4 @@
-APP_NAME = topowners
+APP_NAME = gitowner
 GOPATH ?= ~/go
 BIN_DIR = $(GOPATH)/bin
 
