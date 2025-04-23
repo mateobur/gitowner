@@ -2,7 +2,10 @@ module github.com/mateobur/gitowner
 
 go 1.24.1
 
-require github.com/go-git/go-git/v5 v5.14.0
+require (
+	github.com/BurntSushi/toml v1.5.0
+	github.com/go-git/go-git/v5 v5.14.0
+)
 
 require (
 	dario.cat/mergo v1.0.0 // indirect
